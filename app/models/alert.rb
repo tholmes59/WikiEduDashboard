@@ -39,10 +39,12 @@ class Alert < ApplicationRecord
     BlockedUserAlert
     ContinuedCourseActivityAlert
     DeletedUploadsAlert
+    DiscretionarySanctionsAssignmentAlert
     DiscretionarySanctionsEditAlert
     DYKNominationAlert
     FirstEnrolledStudentAlert
     GANominationAlert
+    HighQualityArticleAssignmentAlert
     HighQualityArticleEditAlert
     NeedHelpAlert
     NoEnrolledStudentsAlert
@@ -60,9 +62,11 @@ class Alert < ApplicationRecord
     ArticlesForDeletionAlert
     BadWorkAlert
     ContinuedCourseActivityAlert
+    DiscretionarySanctionsAssignmentAlert
     DiscretionarySanctionsEditAlert
     DYKNominationAlert
     GANominationAlert
+    HighQualityArticleAssignmentAlert
     HighQualityArticleEditAlert
     OverEnrollmentAlert
   ].freeze
@@ -74,9 +78,11 @@ class Alert < ApplicationRecord
     BlockedUserAlert
     ContinuedCourseActivityAlert
     DeletedUploadsAlert
+    DiscretionarySanctionsAssignmentAlert
     DiscretionarySanctionsEditAlert
     DYKNominationAlert
     GANominationAlert
+    HighQualityArticleAssignmentAlert
     HighQualityArticleEditAlert
     NoEnrolledStudentsAlert
     ProductiveCourseAlert
