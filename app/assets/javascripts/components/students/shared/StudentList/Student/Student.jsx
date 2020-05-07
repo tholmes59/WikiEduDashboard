@@ -9,6 +9,7 @@ import { setUploadFilters } from '~/app/assets/javascripts/actions/uploads_actio
 import { fetchUserRevisions } from '~/app/assets/javascripts/actions/user_revisions_actions';
 import { fetchTrainingStatus } from '~/app/assets/javascripts/actions/training_status_actions';
 import { groupByAssignmentType } from '@components/util/helpers';
+import { ASSIGNED_ROLE, REVIEWING_ROLE } from '@constants/assignments';
 
 // Components
 import ContentAdded from './ContentAdded';
@@ -31,10 +32,8 @@ const Student = createReactClass({
     editable: PropTypes.bool,
     fetchUserRevisions: PropTypes.func.isRequired,
     fetchTrainingStatus: PropTypes.func.isRequired,
-    isOpen: PropTypes.bool,
     minimalView: PropTypes.bool,
     student: PropTypes.object.isRequired,
-    toggleDrawer: PropTypes.func,
     wikidataLabels: PropTypes.object
   },
 
@@ -46,41 +45,27 @@ const Student = createReactClass({
     return e.stopPropagation();
   },
 
-  openDrawer() {
-    const { course, history, isOpen, student, toggleDrawer } = this.props;
-    if (!toggleDrawer) {
-      const url = `/courses/${course.slug}/students/articles/${student.username}`;
-      return history.push(url);
-    }
-
-    if (!isOpen) {
-      this.props.fetchUserRevisions(course.id, student.id);
-      this.props.fetchTrainingStatus(student.id, course.id);
-      this.props.fetchExercises(course.id, student.id);
-    }
-
-    return toggleDrawer(`drawer_${student.id}`);
+  openStudentDetails() {
+    const { course, history, student } = this.props;
+    const url = `/courses/${course.slug}/students/articles/${student.username}`;
+    return history.push(url);
   },
 
   _shouldShowRealName() {
-    const studentRole = 0;
     if (!this.props.student.real_name) { return false; }
-    return this.props.current_user && (this.props.current_user.admin || this.props.current_user.role > studentRole);
+    return this.props.current_user.isAdvancedRole;
   },
 
   render() {
     const {
-      assignments, course, current_user, editable, isOpen,
+      assignments, course, current_user, editable,
       showRecent, student, wikidataLabels
     } = this.props;
-
-    let className = 'students';
-    className += isOpen ? ' open' : '';
 
     let recentRevisions;
     if (showRecent) {
       recentRevisions = (
-        <td className="desktop-only-tc" onClick={this.openDrawer} >
+        <td className="desktop-only-tc" onClick={this.openStudentDetails} >
           {student.recent_revisions}
         </td>
       );
@@ -103,7 +88,7 @@ const Student = createReactClass({
           editable={editable}
           isStudentsPage
           student={student}
-          role={0}
+          role={ASSIGNED_ROLE}
           wikidataLabels={wikidataLabels}
           unassigned={unassigned}
         />
@@ -118,7 +103,7 @@ const Student = createReactClass({
           editable={editable}
           isStudentsPage
           student={student}
-          role={1}
+          role={REVIEWING_ROLE}
           wikidataLabels={wikidataLabels}
           unassigned={reviewable}
         />
@@ -128,8 +113,8 @@ const Student = createReactClass({
     const uploadsLink = `/courses/${course.slug}/uploads`;
 
     return (
-      <tr className={className}>
-        <td onClick={this.openDrawer} style={{ minWidth: '250px' }}>
+      <tr className="students">
+        <td onClick={this.openStudentDetails} style={{ minWidth: '250px' }}>
           <div className="name">
             <StudentUsername current_user={current_user} student={student} />
           </div>
@@ -141,15 +126,17 @@ const Student = createReactClass({
           <ExerciseProgressDescription student={student} />
           <TrainingProgressDescription student={student} />
         </td>
-        <td className="desktop-only-tc" onClick={this.openDrawer}>
+        <td className="desktop-only-tc" onClick={this.openStudentDetails}>
           {assignButton}
         </td>
-        <td className="desktop-only-tc" onClick={this.openDrawer}>
+        <td className="desktop-only-tc" onClick={this.openStudentDetails}>
           {reviewButton}
         </td>
         {recentRevisions}
-        <ContentAdded course={course} student={student} />
-        <td className="desktop-only-tc" onClick={this.openDrawer}>
+        <td className="desktop-only-tc" onClick={this.openStudentDetails}>
+          <ContentAdded course={course} student={student} />
+        </td>
+        <td className="desktop-only-tc" onClick={this.openStudentDetails}>
           {student.references_count}
         </td>
         <td className="desktop-only-tc">
@@ -162,13 +149,6 @@ const Student = createReactClass({
             {student.total_uploads || 0}
           </Link>
         </td>
-        {
-          this.props.toggleDrawer && (
-            <td onClick={this.openDrawer}>
-              <button className="icon icon-arrow table-expandable-indicator" />
-            </td>
-          )
-        }
       </tr>
     );
   }

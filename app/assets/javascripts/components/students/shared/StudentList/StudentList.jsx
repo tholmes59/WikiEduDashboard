@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import moment from 'moment';
 
 // Components
 import List from '@components/common/list.jsx';
 import StudentRow from '@components/students/shared/StudentList/StudentRow.jsx';
-import StudentDrawer from './StudentDrawer/StudentDrawer';
 
 // Libraries
 import CourseUtils from '~/app/assets/javascripts/utils/course_utils.js';
@@ -24,8 +22,8 @@ const showRecent = (course) => {
 
 export const StudentList = (props) => {
   const {
-    assignments, course, current_user, editAssignments, exerciseView, openKey, sort, students,
-    toggleUI, trainingStatus, wikidataLabels, sortUsers, userRevisions = {}
+    assignments, course, current_user, editAssignments, sort, students,
+    wikidataLabels, sortUsers = {}
   } = props;
 
   const rows = students.map(student => (
@@ -35,28 +33,11 @@ export const StudentList = (props) => {
       current_user={current_user}
       editAssignments={editAssignments}
       key={student.id}
-      openKey={openKey}
       showRecent={showRecent(course)}
       student={student}
-      toggleUI={toggleUI}
       wikidataLabels={wikidataLabels}
     />
   ));
-
-  const drawers = students.map(student => (
-    <StudentDrawer
-      student={student}
-      course={course}
-      exerciseView={exerciseView}
-      key={`drawer_${student.id}`}
-      isOpen={openKey === `drawer_${student.id}`}
-      revisions={userRevisions[student.id]}
-      trainingModules={trainingStatus[student.id]}
-      wikidataLabels={wikidataLabels}
-    />
-  ));
-
-  const elements = _.flatten(_.zip(rows, drawers));
 
   const keys = studentListKeys(course);
   if (!showRecent(course)) delete keys.recent_revisions;
@@ -64,7 +45,7 @@ export const StudentList = (props) => {
 
   return (
     <List
-      elements={elements}
+      elements={rows}
       className="table--expandable table--hoverable"
       keys={keys}
       table_key="users"
@@ -90,12 +71,10 @@ StudentList.propTypes = {
   }).isRequired,
   current_user: PropTypes.object.isRequired,
   editAssignments: PropTypes.bool,
-  openKey: PropTypes.string,
   sort: PropTypes.shape({
     key: PropTypes.string,
     sortKey: PropTypes.string
   }).isRequired,
-  toggleUI: PropTypes.func,
   sortUsers: PropTypes.func,
   wikidataLabels: PropTypes.object,
 };
