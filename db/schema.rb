@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_21_180015) do
+ActiveRecord::Schema.define(version: 2020_05_07_161934) do
 
   create_table "alerts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "course_id"
@@ -497,7 +497,7 @@ ActiveRecord::Schema.define(version: 2020_04_21_180015) do
     t.string "wiki_page"
     t.text "assessment"
     t.text "content"
-    t.text "translations", size: :medium
+    t.text "translations"
     t.string "slug"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
